@@ -1,0 +1,75 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+    <title>Login to USPS Portal</title>
+    <link rel="shortcut icon" href="https://www.qg.com/shared/cache/qg/smartstudio/images/favicon.ico" />
+    <link rel="stylesheet" href="https://www.qg.com/shared/cache/jquery-ui/1821/jquery-ui-1.8.21.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="https://www.qg.com/shared/nocache/qg/smartstudio/1.8/styles/style_screen.min.css" type="text/css" />
+
+    <link rel="stylesheet" href="https://www.qg.com/shared/nocache/qg/smartstudio/1.8/styles/style_login.min.css" type="text/css" />
+    <script type="text/javascript">document.documentElement.className = "js";</script>
+</head>
+
+<body class="login">
+<div class="login-box"> 
+    <div class="login-box-head">
+        <h2>Login to USPS Portal</h2>
+    </div>  
+    <div class="login-box-body">
+        <form action="/USPSPortal/Login/Authenticate" method='post' id='form1' >
+            <div class="login-box-body-fields">
+                <input id="ReturnUrl" name="ReturnUrl" type="hidden" value="/USPSPortal/" />
+                <ol id="loginFields">
+                    <li><label for="Username" id="Username_Label">Username</label><input id="Username" name="Username" type="text" value="" /></li>
+                    <li><label for="Password" id="Password_Label">Password</label><input id="Password" name="Password" type="password" value="" /></li>
+                    <li><select id="Domain" name="Domain"><option selected="selected" value="QG">QG</option><option value="QMED">QMED</option></select></li>
+                </ol>
+                <div id="nojsMessage" class="quad-message-box ui-widget yellow">
+    <span class="ui-icon ui-icon-alert ui-icon-gray"></span>
+    <div class="message">
+        This site best experienced with JavaScript enabled.
+    </div>
+</div>
+            </div>
+            <div class="login-box-body-buttons">
+                <button type="submit" class="button right medium" ><span>Login</span></button>
+                <a class="smartpass" title="Click for assistance with SmartPass" href="https://smartpass.qg.com" target="_blank">Click for assistance with SmartPass</a>
+            </div>
+        </form>
+    </div> 
+</div>
+
+<div class="login-footer">
+    <div class="logo-watermark"></div>
+    <ul class="bar-nav">
+    </ul>  
+
+</div>
+
+	<script type="text/javascript" src="https://www.qg.com/shared/cache/jquery/172/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="https://www.qg.com/shared/cache/jquery-ui/1821/jquery-ui-1.8.21.min.js"></script>
+<script type="text/javascript" src="/USPSPortal/SmartStudioWords.en-US.aspx"></script>
+	<script type="text/javascript" src="https://www.qg.com/shared/nocache/qg/smartstudio/1.8/scripts/smartstudio_base.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#loginFields input").watermark({
+            placeholder: function() {
+                return $("label[for=" + this.id + "]").hide().text();
+            }
+        });
+
+        $("#Username").focus();
+
+        if ($(".highlight-smartpass").length > 0) {
+            $(".smartpass").addClass("highlight");
+            $(".smartpass").effect("bounce");
+        }
+    });
+</script>
+
+</body>
+</html>

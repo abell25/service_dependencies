@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+
+
+<style type="text/css">
+table.sortable{font-family:"Lucida Sans Unicode", "Lucida Grande", Sans-Serif;font-size:12px;width:480px;text-align:left;border-collapse:collapse;margin:20px;}table.sortable thead th.rounded-company{background:#b9c9fe url("http://media.smashingmagazine.com/images/express-css-table-design/table-images/left.png") left -1px no-repeat;}table.sortable thead th.rounded-q4{background:#b9c9fe url("http://media.smashingmagazine.com/images/express-css-table-design/table-images/right.png") right -1px no-repeat;}table.sortable th{font-weight:normal;font-size:13px;color:#039;background:#b9c9fe;padding:8px;}table.sortable td{background:#e8edff;border-top:1px solid #fff;color:#669;padding:8px;}table.sortable tfoot td.rounded-foot-left{background:#e8edff url("http://media.smashingmagazine.com/images/express-css-table-design/table-images/botleft.png") left bottom no-repeat;}table.sortable tfoot td.rounded-foot-right{background:#e8edff url("http://media.smashingmagazine.com/images/express-css-table-design/table-images/botright.png") right bottom no-repeat;}table.sortable tbody tr:hover td{background:#d0dafd;}
+</style>
+
+<script>
+
+var stIsIE = /*@cc_on!@*/false;
+
+sorttable = {
+  init: function() {
+    // quit if this function has already been called
+    if (arguments.callee.done) return;
+    // flag this function so we don't do the same thing twice
+    arguments.callee.done = true;
+    // kill the timer
+    if (_timer) clearInterval(_timer);
+
+    if (!document.createElement || !document.getElementsByTagName) return;
+
+    sorttable.DATE_RE = /^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/;
+
+    forEach(document.getElementsByTagName('table'), function(table) {
+      if (table.className.search(/\bsortable\b/) != -1) {
+        sorttable.makeSortable(table);
+      }
+    });
+
+  },
+
+  makeSortable: function(table) {
+    if (table.getElementsByTagName('thead').length == 0) {
+      // table doesn't have a tHead. Since it should have, create one and
+      // put the first table row in it.
+      the = document.createElement('thead');
+      the.appendChild(table.rows[0]);
+      table.insertBefore(the,table.firstChild);
+    }
+    // Safari doesn't support table.tHead, sigh
+    if (table.tHead == null) table.tHead = table.getElementsByTagName('thead')[0];
+
+    if (table.tHead.rows.length != 1) return; // can't cope with two header rows
+
+    // Sorttable v1 put rows with a class of "sortbottom" at the bottom (as
+    // "total" rows, for example). This is B&R, since what you're supposed
+    // to do is put them in a tfoot. So, if there are sortbottom rows,
+    // for backwards compatibility, move them to tfoot (creating it if needed).
+    sortbottomrows = [];
+    for (var i=0; i<table.rows.length; i++) {
+      if (table.rows[i].className.search(/\bsortbottom\b/) != -1) {
+        sortbottomrows[sortbottomrows.length] = table.rows[i];
+      }
+    }
+    if (sortbottomrows) {
+      if (table.tFoot == null) {
+        // table doesn't have a tfoot. Create one.
+        tfo = document.createElement('tfoot');
+        table.appendChild(tfo);
+      }
+      for (var i=0; i<sortbottomrows.length; i++) {
+        tfo.appendChild(sortbottomrows[i]);
+      }
+      delete sortbottomrows;
+    }
+
+    // work through each column and calculate its type
+    headrow = table.tHead.rows[0].cells;
+    for (var i=0; i<headrow.length; i++) {
+      // manually override the type with a sorttable_type attribute
+      if (!headrow[i].className.match(/\bsorttable_nosort\b/)) { // skip this col
+        mtch = headrow[i].className.match(/\bsorttable_([a-z0-9]+)\b/);
+        if (mtch) { override = mtch[1]; }
+	      if (mtch && typeof sorttable["sort_"+override] == 'function') {
+	        headrow[i].sorttable_sortfunction = sorttable["sort_"+override];
+	      } else {
+	        headrow[i].sorttable_sortfunction = sorttable.guessType(table,i);
+	      }
+	      // make it clickable to sort
+	      headrow[i].sorttable_columnindex = i;
+	      headrow[i].sorttable_tbody = table.tBodies[0];
+	      dean_addEvent(headrow[i],"click", sorttable.innerSortFunction = function(e) {
+
+          if (this.className.search(/\bsorttable_sorted\b/) != -1) {
+            // if we're already sorted by this column, just
+            // reverse the table, which is quicker
+            sorttable.reverse(this.sorttable_tbody);
+            this.className = this.className.replace('sorttable_sorted',
+                                                    'sorttable_sorted_reverse');
+            this.removeChild(document.getElementById('sorttable_sortfwdind'));
+            sortrevind = document.createElement('span');
+            sortrevind.id = "sorttable_sortrevind";
+            sortrevind.innerHTML = stIsIE ? '&nbsp<font face="webdings">5</font>' : '&nbsp;&#x25B4;';
+            this.appendChild(sortrevind);
+            return;
+          }
+          if (this.className.search(/\bsorttable_sorted_reverse\b/) != -1) {
+            // if we're already sorted by this column in reverse, just
+            // re-reverse the table, which is quicker
+            sorttable.reverse(this.sorttable_tbody);
+            this.className = this.className.replace('sorttable_sorted_reverse',
+                                                    'sorttable_sorted');
+            this.removeChild(document.getElementById('sorttable_sortrevind'));
+            sortfwdind = document.createElement('span');
+            sortfwdind.id = "sorttable_sortfwdind";
+            sortfwdind.innerHTML = stIsIE ? '&nbsp<font face="webdings">6</font>' : '&nbsp;&#x25BE;';
+            this.appendChild(sortfwdind);
+            return;
+          }
+
+          // remove sorttable_sorted classes
+          theadrow = this.parentNode;
+          forEach(theadrow.childNodes, function(cell) {
+            if (cell.nodeType == 1) { // an element
+              cell.className = cell.className.replace('sorttable_sorted_reverse','');
+              cell.className = cell.className.replace('sorttable_sorted','');
+            }
+          });
+          sortfwdind = document.getElementById('sorttable_sortfwdind');
+          if (sortfwdind) { sortfwdind.parentNode.removeChild(sortfwdind); }
+          sortrevind = document.getElementById('sorttable_sortrevind');
+          if (sortrevind) { sortrevind.parentNode.removeChild(sortrevind); }
+
+          this.className += ' sorttable_sorted';
+          sortfwdind = document.createElement('span');
+          sortfwdind.id = "sorttable_sortfwdind";
+          sortfwdind.innerHTML = stIsIE ? '&nbsp<font face="webdings">6</font>' : '&nbsp;&#x25BE;';
+          this.appendChild(sortfwdind);
+
+	        // build an array to sort. This is a Schwartzian transform thing,
+	        // i.e., we "decorate" each row with the actual sort key,
+	        // sort based on the sort keys, and then put the rows back in order
+	        // which is a lot faster because you only do getInnerText once per row
+	        row_array = [];
+	        col = this.sorttable_columnindex;
+	        rows = this.sorttable_tbody.rows;
+	        for (var j=0; j<rows.length; j++) {
+	          row_array[row_array.length] = [sorttable.getInnerText(rows[j].cells[col]), rows[j]];
+	        }
+	        /* If you want a stable sort, uncomment the following line */
+	        //sorttable.shaker_sort(row_array, this.sorttable_sortfunction);
+	        /* and comment out this one */
+	        row_array.sort(this.sorttable_sortfunction);
+
+	        tb = this.sorttable_tbody;
+	        for (var j=0; j<row_array.length; j++) {
+	          tb.appendChild(row_array[j][1]);
+	        }
+
+	        delete row_array;
+	      });
+	    }
+    }
+  },
+
+  guessType: function(table, column) {
+    // guess the type of a column based on its first non-blank row
+    sortfn = sorttable.sort_alpha;
+    for (var i=0; i<table.tBodies[0].rows.length; i++) {
+      text = sorttable.getInnerText(table.tBodies[0].rows[i].cells[column]);
+      if (text != '') {
+        if (text.match(/^-?[£$¤]?[\d,.]+%?$/)) {
+          return sorttable.sort_numeric;
+        }
+        // check for a date: dd/mm/yyyy or dd/mm/yy
+        // can have / or . or - as separator
+        // can be mm/dd as well
+        possdate = text.match(sorttable.DATE_RE)
+        if (possdate) {
+          // looks like a date
+          first = parseInt(possdate[1]);
+          second = parseInt(possdate[2]);
+          if (first > 12) {
+            // definitely dd/mm
+            return sorttable.sort_ddmm;
+          } else if (second > 12) {
+            return sorttable.sort_mmdd;
+          } else {
+            // looks like a date, but we can't tell which, so assume
+            // that it's dd/mm (English imperialism!) and keep looking
+            sortfn = sorttable.sort_ddmm;
+          }
+        }
+      }
+    }
+    return sortfn;
+  },
+
+  getInnerText: function(node) {
+    // gets the text we want to use for sorting for a cell.
+    // strips leading and trailing whitespace.
+    // this is *not* a generic getInnerText function; it's special to sorttable.
+    // for example, you can override the cell text with a customkey attribute.
+    // it also gets .value for <input> fields.
+
+    if (!node) return "";
+
+    hasInputs = (typeof node.getElementsByTagName == 'function') &&
+                 node.getElementsByTagName('input').length;
+
+    if (node.getAttribute("sorttable_customkey") != null) {
+      return node.getAttribute("sorttable_customkey");
+    }
+    else if (typeof node.textContent != 'undefined' && !hasInputs) {
+      return node.textContent.replace(/^\s+|\s+$/g, '');
+    }
+    else if (typeof node.innerText != 'undefined' && !hasInputs) {
+      return node.innerText.replace(/^\s+|\s+$/g, '');
+    }
+    else if (typeof node.text != 'undefined' && !hasInputs) {
+      return node.text.replace(/^\s+|\s+$/g, '');
+    }
+    else {
+      switch (node.nodeType) {
+        case 3:
+          if (node.nodeName.toLowerCase() == 'input') {
+            return node.value.replace(/^\s+|\s+$/g, '');
+          }
+        case 4:
+          return node.nodeValue.replace(/^\s+|\s+$/g, '');
+          break;
+        case 1:
+        case 11:
+          var innerText = '';
+          for (var i = 0; i < node.childNodes.length; i++) {
+            innerText += sorttable.getInnerText(node.childNodes[i]);
+          }
+          return innerText.replace(/^\s+|\s+$/g, '');
+          break;
+        default:
+          return '';
+      }
+    }
+  },
+
+  reverse: function(tbody) {
+    // reverse the rows in a tbody
+    newrows = [];
+    for (var i=0; i<tbody.rows.length; i++) {
+      newrows[newrows.length] = tbody.rows[i];
+    }
+    for (var i=newrows.length-1; i>=0; i--) {
+       tbody.appendChild(newrows[i]);
+    }
+    delete newrows;
+  },
+
+  /* sort functions
+     each sort function takes two parameters, a and b
+     you are comparing a[0] and b[0] */
+  sort_numeric: function(a,b) {
+    aa = parseFloat(a[0].replace(/[^0-9.-]/g,''));
+    if (isNaN(aa)) aa = 0;
+    bb = parseFloat(b[0].replace(/[^0-9.-]/g,''));
+    if (isNaN(bb)) bb = 0;
+    return aa-bb;
+  },
+  sort_alpha: function(a,b) {
+    if (a[0]==b[0]) return 0;
+    if (a[0]<b[0]) return -1;
+    return 1;
+  },
+  sort_ddmm: function(a,b) {
+    mtch = a[0].match(sorttable.DATE_RE);
+    y = mtch[3]; m = mtch[2]; d = mtch[1];
+    if (m.length == 1) m = '0'+m;
+    if (d.length == 1) d = '0'+d;
+    dt1 = y+m+d;
+    mtch = b[0].match(sorttable.DATE_RE);
+    y = mtch[3]; m = mtch[2]; d = mtch[1];
+    if (m.length == 1) m = '0'+m;
+    if (d.length == 1) d = '0'+d;
+    dt2 = y+m+d;
+    if (dt1==dt2) return 0;
+    if (dt1<dt2) return -1;
+    return 1;
+  },
+  sort_mmdd: function(a,b) {
+    mtch = a[0].match(sorttable.DATE_RE);
+    y = mtch[3]; d = mtch[2]; m = mtch[1];
+    if (m.length == 1) m = '0'+m;
+    if (d.length == 1) d = '0'+d;
+    dt1 = y+m+d;
+    mtch = b[0].match(sorttable.DATE_RE);
+    y = mtch[3]; d = mtch[2]; m = mtch[1];
+    if (m.length == 1) m = '0'+m;
+    if (d.length == 1) d = '0'+d;
+    dt2 = y+m+d;
+    if (dt1==dt2) return 0;
+    if (dt1<dt2) return -1;
+    return 1;
+  },
+
+  shaker_sort: function(list, comp_func) {
+    // A stable sort function to allow multi-level sorting of data
+    // see: http://en.wikipedia.org/wiki/Cocktail_sort
+    // thanks to Joseph Nahmias
+    var b = 0;
+    var t = list.length - 1;
+    var swap = true;
+
+    while(swap) {
+        swap = false;
+        for(var i = b; i < t; ++i) {
+            if ( comp_func(list[i], list[i+1]) > 0 ) {
+                var q = list[i]; list[i] = list[i+1]; list[i+1] = q;
+                swap = true;
+            }
+        } // for
+        t--;
+
+        if (!swap) break;
+
+        for(var i = t; i > b; --i) {
+            if ( comp_func(list[i], list[i-1]) < 0 ) {
+                var q = list[i]; list[i] = list[i-1]; list[i-1] = q;
+                swap = true;
+            }
+        } // for
+        b++;
+
+    } // while(swap)
+  }
+}
+
+/* ******************************************************************
+   Supporting functions: bundled here to avoid depending on a library
+   ****************************************************************** */
+
+// Dean Edwards/Matthias Miller/John Resig
+
+/* for Mozilla/Opera9 */
+if (document.addEventListener) {
+    document.addEventListener("DOMContentLoaded", sorttable.init, false);
+}
+
+/* for Internet Explorer */
+/*@cc_on @*/
+/*@if (@_win32)
+    document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
+    var script = document.getElementById("__ie_onload");
+    script.onreadystatechange = function() {
+        if (this.readyState == "complete") {
+            sorttable.init(); // call the onload handler
+        }
+    };
+/*@end @*/
+
+/* for Safari */
+if (/WebKit/i.test(navigator.userAgent)) { // sniff
+    var _timer = setInterval(function() {
+        if (/loaded|complete/.test(document.readyState)) {
+            sorttable.init(); // call the onload handler
+        }
+    }, 10);
+}
+
+/* for other browsers */
+window.onload = sorttable.init;
+
+// written by Dean Edwards, 2005
+// with input from Tino Zijdel, Matthias Miller, Diego Perini
+
+// http://dean.edwards.name/weblog/2005/10/add-event/
+
+function dean_addEvent(element, type, handler) {
+	if (element.addEventListener) {
+		element.addEventListener(type, handler, false);
+	} else {
+		// assign each event handler a unique ID
+		if (!handler.$$guid) handler.$$guid = dean_addEvent.guid++;
+		// create a hash table of event types for the element
+		if (!element.events) element.events = {};
+		// create a hash table of event handlers for each element/event pair
+		var handlers = element.events[type];
+		if (!handlers) {
+			handlers = element.events[type] = {};
+			// store the existing event handler (if there is one)
+			if (element["on" + type]) {
+				handlers[0] = element["on" + type];
+			}
+		}
+		// store the event handler in the hash table
+		handlers[handler.$$guid] = handler;
+		// assign a global event handler to do all the work
+		element["on" + type] = handleEvent;
+	}
+};
+// a counter used to create unique IDs
+dean_addEvent.guid = 1;
+
+function removeEvent(element, type, handler) {
+	if (element.removeEventListener) {
+		element.removeEventListener(type, handler, false);
+	} else {
+		// delete the event handler from the hash table
+		if (element.events && element.events[type]) {
+			delete element.events[type][handler.$$guid];
+		}
+	}
+};
+
+function handleEvent(event) {
+	var returnValue = true;
+	// grab the event object (IE uses a global event object)
+	event = event || fixEvent(((this.ownerDocument || this.document || this).parentWindow || window).event);
+	// get a reference to the hash table of event handlers
+	var handlers = this.events[event.type];
+	// execute each event handler
+	for (var i in handlers) {
+		this.$$handleEvent = handlers[i];
+		if (this.$$handleEvent(event) === false) {
+			returnValue = false;
+		}
+	}
+	return returnValue;
+};
+
+function fixEvent(event) {
+	// add W3C standard event methods
+	event.preventDefault = fixEvent.preventDefault;
+	event.stopPropagation = fixEvent.stopPropagation;
+	return event;
+};
+fixEvent.preventDefault = function() {
+	this.returnValue = false;
+};
+fixEvent.stopPropagation = function() {
+  this.cancelBubble = true;
+}
+
+// Dean's forEach: http://dean.edwards.name/base/forEach.js
+/*
+	forEach, version 1.0
+	Copyright 2006, Dean Edwards
+	License: http://www.opensource.org/licenses/mit-license.php
+*/
+
+// array-like enumeration
+if (!Array.forEach) { // mozilla already supports this
+	Array.forEach = function(array, block, context) {
+		for (var i = 0; i < array.length; i++) {
+			block.call(context, array[i], i, array);
+		}
+	};
+}
+
+// generic enumeration
+Function.prototype.forEach = function(object, block, context) {
+	for (var key in object) {
+		if (typeof this.prototype[key] == "undefined") {
+			block.call(context, object[key], key, object);
+		}
+	}
+};
+
+// character enumeration
+String.forEach = function(string, block, context) {
+	Array.forEach(string.split(""), function(chr, index) {
+		block.call(context, chr, index, string);
+	});
+};
+
+// globally resolve forEach enumeration
+var forEach = function(object, block, context) {
+	if (object) {
+		var resolve = Object; // default
+		if (object instanceof Function) {
+			// functions have a "length" property
+			resolve = Function;
+		} else if (object.forEach instanceof Function) {
+			// the object implements a custom forEach method so use that
+			object.forEach(block, context);
+			return;
+		} else if (typeof object == "string") {
+			// the object is a string
+			resolve = String;
+		} else if (typeof object.length == "number") {
+			// the object is array-like
+			resolve = Array;
+		}
+		resolve.forEach(object, block, context);
+	}
+};
+
+
+</script>
+    
+
+<style type="text/css">
+
+path.arc {
+  cursor: move;
+  fill: #fff;
+}
+
+.node {
+  font-size: 10px;
+}
+
+.node:hover {
+  fill: #1f77b4;
+}
+
+.link {
+  fill: none;
+  stroke: #1f77b4;
+  stroke-opacity: .4;
+  pointer-events: none;
+}
+
+.link.source, .link.target {
+  stroke-opacity: 1;
+  stroke-width: 2px;
+}
+
+.node.target {
+  fill: #d62728 !important;
+}
+
+.link.source {
+  stroke: #d62728;
+}
+
+.node.source {
+  fill: #2ca02c;
+}
+
+.link.target {
+  stroke: #2ca02c;
+}
+
+    </style>
+  
+<!--[if gte mso 9]><xml>
+<mso:CustomDocumentProperties>
+<mso:ContentType msdt:dt="string">Document</mso:ContentType>
+</mso:CustomDocumentProperties>
+</xml><![endif]-->
+<title>Post Press Dependency Graph</title></head>
+  <body>
+    <h2>
+      Post Press<br>
+      Dependencies
+    </h2>
+    <div style="position:absolute;bottom:0;font-size:18px;"><input style="position:relative;top:3px;display:none;" type="range" min="0" max="100" value="85"></div>
+    <script type="text/javascript" src="d3.js"></script
+    <script type="text/javascript" src="d3.layout.js"></script>
+    <script type="text/javascript" src="packages.js"></script>
+    <script type="text/javascript" src="stats.js"></script>
+    <script type="text/javascript">
+
+var w = 1280,
+    h = 800,
+    rx = w / 2,
+    ry = h / 2,
+    m0,
+    rotate = 0;
+
+var splines = [];
+
+var cluster = d3.layout.cluster()
+    .size([360, ry - 120])
+    .sort(function(a, b) { return d3.ascending(a.key, b.key); });
+
+var bundle = d3.layout.bundle();
+
+var line = d3.svg.line.radial()
+    .interpolate("bundle")
+    .tension(.85)
+    .radius(function(d) { return d.y; })
+    .angle(function(d) { return d.x / 180 * Math.PI; });
+
+// Chrome 15 bug: <http://code.google.com/p/chromium/issues/detail?id=98951>
+var div = d3.select("body").insert("div", "h2")
+    .style("top", "-80px")
+    .style("left", "-160px")
+    .style("width", w + "px")
+    .style("height", w + "px")
+    .style("position", "absolute");
+
+var svg = div.append("svg:svg")
+    .attr("width", w)
+    .attr("height", w)
+  .append("svg:g")
+    .attr("transform", "translate(" + rx + "," + ry + ")");
+
+svg.append("svg:path")
+    .attr("class", "arc")
+    .attr("d", d3.svg.arc().outerRadius(ry - 120).innerRadius(0).startAngle(0).endAngle(2 * Math.PI))
+    .on("mousedown", mousedown);
+
+  //d3.json("stats.json", function(classes) {
+  ////d3.json("stats_works2.json", function(classes) {
+  classes = stats;
+  var nodes = cluster.nodes(packages.root(classes)),
+      links = packages.imports(nodes),
+      splines = bundle(links);
+
+  var path = svg.selectAll("path.link")
+      .data(links)
+    .enter().append("svg:path")
+      .attr("class", function(d) { return "link source-" + d.source.key + " target-" + d.target.key; })
+      .attr("d", function(d, i) { return line(splines[i]); });
+
+  svg.selectAll("g.node")
+      .data(nodes.filter(function(n) { return !n.children; }))
+    .enter().append("svg:g")
+      .attr("class", "node")
+      .attr("id", function(d) { return "node-" + d.key; })
+      .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
+    .append("svg:text")
+      .attr("dx", function(d) { return d.x < 180 ? 8 : -8; })
+      .attr("dy", ".31em")
+      .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+      .attr("transform", function(d) { return d.x < 180 ? null : "rotate(180)"; })
+      .text(function(d) { return d.key; })
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseout);
+
+  d3.select("input[type=range]").on("change", function() {
+    line.tension(this.value / 100);
+    path.attr("d", function(d, i) { return line(splines[i]); });
+  });
+
+d3.select(window)
+    .on("mousemove", mousemove)
+    .on("mouseup", mouseup);
+
+function mouse(e) {
+  return [e.pageX - rx, e.pageY - ry];
+}
+
+function mousedown() {
+  m0 = mouse(d3.event);
+  d3.event.preventDefault();
+}
+
+function mousemove() {
+  if (m0) {
+    var m1 = mouse(d3.event),
+        dm = Math.atan2(cross(m0, m1), dot(m0, m1)) * 180 / Math.PI;
+    div.style("-webkit-transform", "translate3d(0," + (ry - rx) + "px,0)rotate3d(0,0,0," + dm + "deg)translate3d(0," + (rx - ry) + "px,0)");
+  }
+}
+
+function mouseup() {
+  if (m0) {
+    var m1 = mouse(d3.event),
+        dm = Math.atan2(cross(m0, m1), dot(m0, m1)) * 180 / Math.PI;
+
+    rotate += dm;
+    if (rotate > 360) rotate -= 360;
+    else if (rotate < 0) rotate += 360;
+    m0 = null;
+
+    div.style("-webkit-transform", "rotate3d(0,0,0,0deg)");
+
+    svg
+        .attr("transform", "translate(" + rx + "," + ry + ")rotate(" + rotate + ")")
+      .selectAll("g.node text")
+        .attr("dx", function(d) { return (d.x + rotate) % 360 < 180 ? 8 : -8; })
+        .attr("text-anchor", function(d) { return (d.x + rotate) % 360 < 180 ? "start" : "end"; })
+        .attr("transform", function(d) { return (d.x + rotate) % 360 < 180 ? null : "rotate(180)"; });
+  }
+}
+
+function mouseover(d) {
+  svg.selectAll("path.link.target-" + d.key)
+      .classed("target", true)
+      .each(updateNodes("source", true));
+
+  svg.selectAll("path.link.source-" + d.key)
+      .classed("source", true)
+      .each(updateNodes("target", true));
+}
+
+function mouseout(d) {
+  svg.selectAll("path.link.source-" + d.key)
+      .classed("source", false)
+      .each(updateNodes("target", false));
+
+  svg.selectAll("path.link.target-" + d.key)
+      .classed("target", false)
+      .each(updateNodes("source", false));
+}
+
+function updateNodes(name, value) {
+  return function(d) {
+    if (value) this.parentNode.appendChild(this);
+    svg.select("#node-" + d[name].key).classed(name, value);
+  };
+}
+
+function cross(a, b) {
+  return a[0] * b[1] - a[1] * b[0];
+}
+
+function dot(a, b) {
+  return a[0] * b[0] + a[1] * b[1];
+}
+
+    </script>
+</head>
+<body>
+<table style="float:right;" class="sortable"><tr><th>Service</th><th>.Net</th><th>VS version</th><th>dependencies</th></tr><tr><td>ChpPostPress</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="16" >PostPress.Core.Domain, Quad.Core, Quad.App, Quad.Environment, Quad.WCF, IBatisNet.Common, PostPress.Core.DataAccess, Newtonsoft.Json, PostPress.Core.TestData.Test, ICSharpCode.SharpZipLib, PostPress.Core.Service, PostPress.Core.Validation, PostPress.Core.Mail, ChpMain.Model, ChpMain.Service, ChpMain.Shared</td></tr><tr><td>ListRequest</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="8" >ListRequest.Core, Newtonsoft.Json, Quad.App, Quad.Core, Quad.Environment, IBatisNet.DataMapper, IBatisNet.Common, PostPress.Core.Domain</td></tr><tr><td>ListRequestCore</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="7" >Quad.Environment, IBatisNet.DataMapper, Quad.Core, Newtonsoft.Json, PresentationCore, PresentationFramework, WindowsBase</td></tr><tr><td>ListRequestDocumentManager</td><td>v4.0</td><td>Visual Studio 2010</td><td sorttable_customkey="19" >Csla, IBatisNet.Common, ListRequest.Core, PresentationCore, PresentationFramework, Quad.SmartStudio.Common, QuadFramework, WindowsBase, IBatisNet.DataMapper, Validation.CommonRules, Quad.Windows.Controls, UIAutomationProvider, ListRequest.Core.WPF, ListRequest.Core.WPF.Outlook, Quad.SmartStudio.ClientUXShell, Quad.Windows.Core, Quad.Windows.Images, SmartStudioWebMvc.Common, WPFToolkit</td></tr><tr><td>ListRequestDocumentUploadWebsite</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="2" >ListRequest.Core, Quad.Core</td></tr><tr><td>ListRequestFlo</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="3" >ListRequest.Core, ListRequest.Core.WinForms, Quad.Core</td></tr><tr><td>ListRequestGenerationWCF</td><td>v4.0</td><td>Visual Studio 2010</td><td sorttable_customkey="10" >ListRequest.Core, Quad.Core, Quad.App, Quad.Environment, Quad.WCF, PostPress.Core.Service, IBatisNet.DataMapper, IBatisNet.Common, PostPress.Core.Domain, Newtonsoft.Json</td></tr><tr><td>ListRequestInfoService</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="11" >IBatisNet.Common, IBatisNet.DataMapper, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.Service, QuadFramework, Quad.WCF, ListRequest.Core</td></tr><tr><td>ListRequestReports</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="5" >IBatisNet.Common, IBatisNet.DataMapper, Quad.App, Quad.Core, Quad.Environment</td></tr><tr><td>ML0001_SRV</td><td></td><td>Visual Studio 2008</td><td sorttable_customkey="6" >Accessibility, APP_UTIL, DB_UTIL, FILE_UTIL, ML_LIB, Quad.Data</td></tr><tr><td>ML0002_SRV</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="16" >IBatisNet.Common, IBatisNet.DataMapper, MailDatFileUtilities.DataAccess, MailDatFileUtilities.Domain, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.Service, QuadFramework, MailDatFileUtilities.MailDatFileReaders, PostPress.Core.Mail, ICSharpCode.SharpZipLib, MailDatFileUtilities.MailDatFileWriters, MailDatFileUtilities.RateCategoryConversion</td></tr><tr><td>ML0003_SRV</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="21" >IBatisNet.Common, IBatisNet.DataMapper, MailStream.DataAccess, MailStream.Domain, MongoDB.Bson, MongoDB.Driver, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.Validation, QuadFramework, MailDatFileUtilities.Domain, PostPress.Core.Mail, PostPress.Core.Service, PostPressUtilities.DataAccess, PostPressUtilities.Domain, PostPressUtilities.Service, QTS0029Service.Dto, MailStream.Service, QTS0029Service.Remoting, MailDatFileUtilities.MailDatFileReaders, MailDatFileUtilities.DataAccess</td></tr><tr><td>ML0004_SRV_REWRITE</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="5" >APP_UTIL, DB_UTIL, FILE_UTIL, ML_LIB, PostPress.Core.Mail</td></tr><tr><td>ML0005_SRV</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="11" >IBatisNet.Common, IBatisNet.DataMapper, QuadFramework, ICSharpCode.SharpZipLib, PostPress.Core.Domain, PostPress.Core.Mail, PostPress.Core.Validation, MailDatFileUtilities.Domain, MailDatFileUtilities.MailDatFileReaders, ML0005_SRV.Service, Quad.Core</td></tr><tr><td>ML0006_SRV_REWRITE</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="6" >APP_UTIL, DB_UTIL, FILE_UTIL, MLPackageAllocation.Lib, ML_LIB, PostPress.Core.Mail</td></tr><tr><td>ML0008_SRV</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="15" >IBatisNet.Common, IBatisNet.DataMapper, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.Service, PostPress.DeliveryTracking.Core.DataAccess, PostPress.DeliveryTracking.Core.Domain, QuadFramework, PostPress.Core.Mail, PostPress.Core.ScheduledTask, PostPress.Core.JobQueue, Newtonsoft.Json</td></tr><tr><td>ML0009_SRV</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="7" >PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.Service, QuadFramework, IBatisNet.DataMapper, IBatisNet.Common, PostPress.Core.Mail</td></tr><tr><td>ML0015_SRV</td><td>v4.0</td><td>Visual Studio 2010</td><td sorttable_customkey="25" >IBatisNet.Common, IBatisNet.DataMapper, MailStream.Domain, ML_LIB, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostageCalculator.DataAccess, PostageCalculator.Domain, PostageCalculator.Domain.QTS, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.Service, PostPress.Core.Validation, QuadFramework, Csla, MailDatFileUtilities.Domain, Quad.CslaExt, PostPress.Core.JobQueue, PostPress.Core.Mail, ICSharpCode.SharpZipLib, MailDatFileUtilities.MailDatFileReaders, MailStream.Service, MLPackageAllocation.Lib, PostPressUtilities.Service</td></tr><tr><td>ML0017_SRV_REWRITE</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="22" >IBatisNet.Common, IBatisNet.DataMapper, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.JobQueue, PostPress.Core.Mail, PostPress.Core.Reporting, PostPress.Core.Service, PostPress.Core.Validation, QuadFramework, MailDatFileUtilities.Domain, MailDatFileUtilities.MailDatFileReaders, MailDatFileUtilities.Service, APP_UTIL, DB_UTIL, FILE_UTIL, ML_LIB, tallpdf, Ionic.Zip</td></tr><tr><td>ML0018_SRV</td><td>v4.0</td><td>Visual Studio 2010</td><td sorttable_customkey="13" >IBatisNet.Common, IBatisNet.DataMapper, MailStream.DataAccess, MailStream.Domain, MailStream.Service, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.Validation, Quad.App, Quad.Core, Quad.Environment, QTS0029Service.Remoting, QTS0029Service.Dto</td></tr><tr><td>ML0019_SRV</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="15" >IBatisNet.Common, IBatisNet.DataMapper, MailStream.DataAccess, MailStream.Domain, MailStream.Service, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostPress.Core.DataAccess, PostPress.Core.Domain, QuadFramework, PostPress.Core.Service, PostPressMailTracking.DataAccess, PostPressMailTracking.Domain, Quad.AppManager.Core</td></tr><tr><td>ML0020_SRV_REWRITE</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="37" >IBatisNet.Common, IBatisNet.DataMapper, MailStream.Domain, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostageCalculator.Domain, PostageCalculator.Domain.Estimator, PostPress.Core.Domain, QuadFramework, MailDatFileUtilities.Domain, PostageUtilities.Domain, PostPress.Core.DataAccess, PostPress.Core.Validation, MailDatFileUtilities.DataAccess, MailDatFileUtilities.MailDatFileReaders, MailDatFileUtilities.MailDatFileWriters, MaildatFileUtilities.QgRateLevelConversion, PostPress.Core.Service, MailStream.Service, PostPress.Core.Mail, PostageCalculator.Service.MailStreamSetup, PostPress.Core.TestData.Test, ICSharpCode.SharpZipLib, PostageCalculator.DataAccess, PostageCalculator.EstimatorPostageCalculator, PostageCalculator.Presentation, PostageCalculator.Service.PostageFormCalculator, PostageUtilities.EntryLevelDetermination, antlr.runtime, Spring.Core, MailStream.DataAccess, PostageCalculator.Service, PostageUtilities.QtsDiscountPopulation, QTS0029Service.Dto, QTS0029Service.Remoting, Transportation.Core</td></tr><tr><td>ML0021_SRV</td><td></td><td>Visual Studio 2005</td><td sorttable_customkey="12" >FindRate, MLDetermineDiscount, MLEntityUtilities.Domain, PostageCalcHelper, PostageUtilities.Domain, PostageUtilities.EntryLevelDetermination, PostageUtilities.GetEntry, PostageUtilities.GetZone, PostageUtilities.QtsDiscountPopulation, PostPress.Core.Domain, QGDatabase, Quad.Core</td></tr><tr><td>ML0022_SRV</td><td></td><td>Visual Studio 2008</td><td sorttable_customkey="7" >ML_LIB, pdfkit, QGDatabase, QGEMail, Quad.Data, QuadPDF, tallpdf</td></tr><tr><td>ML0025_SRV</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="9" >APP_UTIL, DB_UTIL, FILE_UTIL, ML_LIB, PostageReporting.Domain, PostPress.Core.Domain, Quad.App, Quad.Core, Quad.Data</td></tr><tr><td>ML0027_SRV</td><td></td><td>Visual Studio 2005</td><td sorttable_customkey="7" >FindRate, PostageCalcHelper, PostageUtilities.Domain, PostageUtilities.GetZone, QGDatabase, Quad.Core, Quad.App</td></tr><tr><td>ML0028_SRV</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="19" >IBatisNet.Common, IBatisNet.DataMapper, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostageCalculator.Domain.StreamDiscounts, PostPress.Core.DataAccess, PostPress.Core.Domain, Quad.PostPress.EntryWrapper, QuadFramework, MailStream.Domain, MailStream.Service, PostageCalculator.StreamDiscountDetermination, PostPress.Core.Mail, PostPress.Core.JobQueue, MailStream.DataAccess, QTS0029Service.Dto, QTS0029Service.Remoting, Transportation.Core</td></tr><tr><td>ML0029_SRV</td><td>v4.0</td><td>Visual Studio 2010</td><td sorttable_customkey="16" >IBatisNet.Common, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.Service, QuadFramework, IBatisNet.DataMapper, Quad.WCF, MailStream.Domain, MailStream.DataAccess, SharpBrake, MailStream.Service, PostPress.Core.JobQueue, PostPress.Core.Mail</td></tr><tr><td>ML0030_WEB_SRV</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="7" >Quad.App, Quad.Core, Quad.Data, Quad.Environment, APP_UTIL, DB_UTIL, FILE_UTIL</td></tr><tr><td>ML0034_SRV</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="12" >MailStream.Domain, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPressUtilities.DataAccess, PostPressUtilities.Domain, QuadFramework, Quad.Core, MailStream.DataAccess, MailStream.Service, PostPress.Core.JobQueue, Quad.App, Quad.Environment</td></tr><tr><td>ML0035_SRV_REWRITE</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="9" >APP_UTIL, DB_UTIL, FILE_UTIL, ML_LIB, PostPress.Core.Mail, PostPress.Core.Service, Quad.App, Quad.Environment, Quad.Core</td></tr><tr><td>ML0037_SRV</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="19" >PostPress.Core.DataAccess, PostPress.Core.Domain, Quad.App, Quad.Core, Quad.Environment, IBatisNet.DataMapper, IBatisNet.Common, Csla, MailStream.Domain, Quad.CslaExt, Apache.NMS, Apache.NMS.ActiveMQ, MailStream.Service, PostPress.Core.Mail, PostPress.Core.Service, PostPress.Core.Validation, PostPressCore.ActiveMQ, Quad.NMS, MailStream.DataAccess</td></tr><tr><td>ML0038_SRV</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="7" >DB_UTIL, APP_UTIL, FILE_UTIL, Quad.App, Quad.Core, Quad.Data, Quad.Environment</td></tr><tr><td>ML0039_SRV</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="43" >IBatisNet.Common, IBatisNet.DataMapper, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostageCalculator.Domain.StreamDiscounts, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.Service, QuadFramework, PostPress.Core.Reporting, PostPress.Core.Validation, MailStream.Domain, MailStream.Service, MailDatFileUtilities.Domain, MailStream.DataAccess, CQGPDFForms, pdfkit, PDPostalManifest, PDUtility, PostageCalculator.DataAccess, PostageCalculator.Domain, PostageCalculator.Domain.Estimator, PostageCalculator.Domain.QTS, PostageCalculator.Service, PostageCalculator.Service.MailStreamSetup, PostageCalculator.Service.StreamDiscounts, PostageCalculator.StreamDiscountDetermination, PostageUtilities.DataAccess, PostageUtilities.Domain, PostageUtilities.EntryLevelDetermination, PostageUtilities.GetEntry, PostageUtilities.GetZone, PostageUtilities.QtsDiscountPopulation, PostageUtilities.Service.LogicalConversion, PostPress.Core.JobQueue, PostPress.Core.Mail, QTS0029Service.Dto, QTS0029Service.Remoting, Quad.Data, ShippingLocationException, tallpdf, Transportation.Core</td></tr><tr><td>ML0040_SRV</td><td></td><td>Visual Studio 2005</td><td sorttable_customkey="9" >APP_UTIL, DB_UTIL, FILE_UTIL, FREIGHT_BILLING_UTIL, ML_LIB, MPU_PSTL_UTIL, Quad.App, Quad.Core, Quad.Data</td></tr><tr><td>ML0042_SRV</td><td>v4.0</td><td>Visual Studio 2010</td><td sorttable_customkey="15" >IBatisNet.Common, IBatisNet.DataMapper, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostPress.Core.DataAccess, PostPress.Core.Domain, QuadFramework, MailDatFileUtilities.DataAccess, MailDatFileUtilities.Domain, PostPress.Core.JobQueue, PostPress.Core.Mail, MailStream.DataAccess, MailStream.Domain, MailStream.Service</td></tr><tr><td>ML0043_SRV</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="9" >APP_UTIL, DB_UTIL, ML_LIB, PostPress.Core.Domain, Quad.App, Quad.Data, FILE_UTIL, Quad.Core, Quad.Environment</td></tr><tr><td>ML0044_SRV_REWRITE</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="16" >PostPress.Core.DataAccess, PostPress.Core.Domain, Quad.App, Quad.Core, Quad.Environment, IBatisNet.DataMapper, IBatisNet.Common, Csla, Quad.CslaExt, APP_UTIL, DB_UTIL, FILE_UTIL, ML_LIB, PostPress.Core.JobQueue, PostPress.Core.Mail, Quad.Data</td></tr><tr><td>ML0045_SRV</td><td></td><td>Visual Studio 2005</td><td sorttable_customkey="7" >APP_UTIL, DB_UTIL, FILE_UTIL, ML_LIB, Quad.Core, Quad.App, Quad.Data</td></tr><tr><td>ML0046_SRV</td><td>v2.0</td><td>Visual Studio 2008</td><td sorttable_customkey="9" >ActiveReports, ActiveReports.PdfExport, ActiveReports.Viewer, APP_UTIL, DB_UTIL, FILE_UTIL, ML_LIB, Quad.Data, UTIL</td></tr><tr><td>ML0047SRV</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="20" >IBatisNet.Common, IBatisNet.DataMapper, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostPress.Core.DataAccess, PostPress.Core.Domain, QuadFramework, PostageCalculator.Domain.Estimator, MLEntityUtilities.Domain, PostPress.Core.JobQueue, PostPress.Core.Mail, PostPress.Core.Validation, PostageCalculator.Domain.StreamExtract, PostageCalculator.Service.MailStreamSetup, PostageCalculator.StreamExtract, MailStream.Domain, MailStream.Service, PostageCalculator.EstimatorPostageCalculator, PostageCalculator.Presentation</td></tr><tr><td>ML0048_JOB</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="4" >APP_UTIL, DB_UTIL, FILE_UTIL, ML_LIB</td></tr><tr><td>ML0049_SRV</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="9" >PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.Validation, Quad.App, Quad.Core, Quad.Data, Quad.Environment, FILE_UTIL, PostPress.Core.Mail</td></tr><tr><td>ML0050_SRV</td><td>v4.0</td><td>Visual Studio 2010</td><td sorttable_customkey="51" >IBatisNet.Common, IBatisNet.DataMapper, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostageReporting.Domain, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.Validation, QuadFramework, PostPress.Core.JobQueue, PostPress.Core.Mail, CustomerReporting.DataAccess, CustomerReporting.Domain, CustomerReporting.Presentation, CustomerReporting.Service, FILE_UTIL, MailStream.DataAccess, MailStream.Domain, MailStream.Service, ML_LIB, PostageCalculator.DataAccess, PostageCalculator.Domain, PostageCalculator.Domain.Estimator, PostageCalculator.Domain.QTS, PostageCalculator.EstimatorPostageCalculator, PostageCalculator.Presentation, PostageCalculator.Service, PostageCalculator.Service.MailStreamSetup, PostageCalculator.Service.PostageFormCalculator, PostageReporting.DataAccess, PostageReporting.Presentation, PostageReporting.Service, PostageUtilities.DataAccess, PostageUtilities.Domain, PostageUtilities.EntryLevelDetermination, PostageUtilities.GetEntry, PostageUtilities.GetZone, PostageUtilities.QtsDiscountPopulation, PostageUtilities.Service.LogicalConversion, PostPress.Core.Reporting, PostPress.WCFServiceHost, PostPress.WCFServiceHost.CrossDockDateServiceHost, QTS0029Service.Dto, QTS0029Service.Remoting, Quad.App, Quad.Core, Quad.Data, Quad.Environment, Transportation.Core, PostPress.Core.Service</td></tr><tr><td>ML0051_JOB</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="22" >IBatisNet.Common, IBatisNet.DataMapper, ICSharpCode.SharpZipLib, MailDatFileUtilities.MailDatFileReaders, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.JobQueue, PostPress.Core.Mail, PostPress.Core.Reporting, PostPress.Core.Service, PostPress.Core.Validation, QuadFramework, Ionic.Zip.Reduced, MailDatFileUtilities.Domain, MLEntityUtilities.Domain, Quad.App, Quad.Core, Quad.Environment, MailDatFileUtilities.DataAccess</td></tr><tr><td>ML0052_JOB</td><td>v4.0</td><td>Visual Studio 2010</td><td sorttable_customkey="12" >IBatisNet.Common, IBatisNet.DataMapper, ICSharpCode.SharpZipLib, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostPress.Core.DataAccess, PostPress.Core.Domain, QuadFramework, PostPress.Core.Mail, Quad.Core, Quad.App</td></tr><tr><td>ML0053_SRV</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="10" >IBatisNet.Common, IBatisNet.DataMapper, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.Mail, PostPress.Core.Service, QuadFramework</td></tr><tr><td>ML0054_SRV</td><td>v4.0</td><td>Visual Studio 2010</td><td sorttable_customkey="23" >IBatisNet.Common, IBatisNet.DataMapper, MailDatFileUtilities.Domain, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostageUtilities.Domain, PostPress.Core.DataAccess, PostPress.Core.Domain, QuadFramework, PostPress.Core.Mail, PostPress.Core.Validation, QTS0029Service.Dto, QTS0029Service.Remoting, Transportation.Core, MailStream.Domain, MailStream.Service, PostageCalculator.Service, PostageCalculator.Service.MailStreamSetup, PostageUtilities.EntryLevelDetermination, PostageUtilities.Service.LogicalConversion, PostPressUtilities.DataTransfer, PostPressUtilities.Domain</td></tr><tr><td>ML0055</td><td>v3.5</td><td>Visual Studio 2010</td><td sorttable_customkey="16" >Apache.NMS, Apache.NMS.ActiveMQ, Newtonsoft.Json, Quad.NMS, MailStream.Domain, PostPress.Core.DataAccess, PostPress.Core.Domain, Quad.App, Quad.Core, Quad.Environment, IBatisNet.DataMapper, IBatisNet.Common, PostPress.Core.Mail, PostPressUtilities.DataAccess, PostPressUtilities.Domain, PostPressUtilities.Service</td></tr><tr><td>ML0056_SRV</td><td>v4.0</td><td>Visual Studio 2010</td><td sorttable_customkey="28" >IBatisNet.Common, IBatisNet.DataMapper, MailDatFileUtilities.DataAccess, MailDatFileUtilities.Domain, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostageCalculator.Domain.Estimator, PostPress.Core.DataAccess, PostPress.Core.Domain, QuadFramework, Csla, Quad.CslaExt, APP_UTIL, DB_UTIL, FILE_UTIL, MailStream.Domain, PostPress.Core.JobQueue, PostPress.Core.Mail, PostPressUtilities.Service, MailStream.Service, PostageCalculator.EstimatorPostageCalculator, PostageCalculator.Presentation, PostageCalculator.Service, PostageCalculator.Service.MailStreamSetup, PostageCalculator.Service.PostageFormCalculator, PostageUtilities.Domain, PostageUtilities.QtsDiscountPopulation</td></tr><tr><td>ML0057_SRV</td><td>v4.0</td><td>Visual Studio 2010</td><td sorttable_customkey="18" >IBatisNet.Common, IBatisNet.DataMapper, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostPress.Core.DataAccess, PostPress.Core.Domain, QuadFramework, Csla, Quad.CslaExt, Quad.Environment, Quad.Core, Quad.App, PostageReporting.Domain, PostageReporting.Service, PostPress.Core.JobQueue, PostPress.Core.Mail, PostPress.Core.Validation</td></tr><tr><td>MLDetermineDiscount</td><td></td><td>Visual Studio 2005</td><td sorttable_customkey="11" >IBatisNet.Common, IBatisNet.DataMapper, MLEntities.Domain, Quad.App, Quad.Core, Quad.Environment, MLEntityUtilities.Domain, MLGetEntry.DataAccess, MLGetEntry.Domain, MLGetEntry.Lib, MLDetermineDiscount.Domain</td></tr><tr><td>MLDiscountInterface</td><td></td><td>Visual Studio 2005</td><td sorttable_customkey="5" >IBatisNet.DataMapper, QTS0029Service.Dto, Quad.App, Quad.Environment, QTS0029Service.Remoting</td></tr><tr><td>MLEntities</td><td></td><td>Visual Studio 2008</td><td sorttable_customkey="0" ></td></tr><tr><td>MLEntityUtilities</td><td></td><td>Visual Studio 2008</td><td sorttable_customkey="2" >FILE_UTIL, MLEntities.Domain</td></tr><tr><td>MLEntryWrapper</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="5" >MLEntityUtilities.Domain, QTS0029Service.Dto, QTS0029Service.Remoting, Transportation.Core, Quad.Core</td></tr><tr><td>MLGetEntry</td><td></td><td>Visual Studio 2005</td><td sorttable_customkey="8" >IBatisNet.Common, IBatisNet.DataMapper, MLEntities.Domain, Quad.App, Quad.Core, Quad.Environment, DB_UTIL, MLEntityUtilities.Domain</td></tr><tr><td>MLGetZone</td><td></td><td>Visual Studio 2005</td><td sorttable_customkey="12" >IBatisNet.Common, IBatisNet.DataMapper, MLEntities.Domain, Quad.App, Quad.Core, Quad.Environment, DB_UTIL, MLEntityUtilities.Domain, MLGetEntry.DataAccess, MLGetEntry.Domain, MLGetEntry.Lib, MLGetZone.Domain</td></tr><tr><td>MLPackageAllocation</td><td></td><td>Visual Studio 2005</td><td sorttable_customkey="3" >APP_UTIL, DB_UTIL, FILE_UTIL</td></tr><tr><td>MLPackageAllocationWrapper</td><td></td><td>Visual Studio 2005</td><td sorttable_customkey="1" >MLPackageAllocation.Lib</td></tr><tr><td>ML_LIB</td><td></td><td>Visual Studio 2008</td><td sorttable_customkey="3" >APP_UTIL, DB_UTIL, FILE_UTIL</td></tr><tr><td>PostPressClassicQuadProcessing</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="14" >Apache.NMS, Apache.NMS.ActiveMQ, PostPressUtilities.DataTransfer, Quad.NMS, Newtonsoft.Json, PostPress.Core.DataAccess, Quad.App, Quad.Core, Quad.Environment, IBatisNet.DataMapper, IBatisNet.Common, MailStream.Domain, MailStream.Service, PostPress.Core.Domain</td></tr><tr><td>PostPressCommonWCF</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="17" >MailDatFileUtilities.Domain, MailStream.DataAccess, PostPress.Core.Domain, Quad.App, Quad.Core, Quad.Environment, Quad.WCF, MailStream.Domain, MailStream.Service, PostPress.Core.DataAccess, PostPress.Core.Service, IBatisNet.DataMapper, IBatisNet.Common, PostPress.Core.Mail, PostPressCore.ActiveMQ, Quad.NMS, CanadaXmlImport.Service</td></tr><tr><td>PostPressContainerMovement</td><td></td><td>Visual Studio 2005</td><td sorttable_customkey="3" >APP_UTIL, DB_UTIL, ML_LIB</td></tr><tr><td>PostPressContainerMovementWCF</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="15" >Quad.Core, Quad.App, Quad.Environment, Quad.WCF, MailStream.Domain, PostPress.Core.DataAccess, PostPress.Core.Domain, IBatisNet.DataMapper, IBatisNet.Common, MailStream.DataAccess, MailStream.Service, PostPress.Core.Service, PostPressUtilities.DataAccess, PostPressUtilities.Domain, PostPressUtilities.Service</td></tr><tr><td>PostPressContainerSplitWCF</td><td>v3.5</td><td>Visual Studio 2010</td><td sorttable_customkey="12" >Quad.Core, Quad.App, Quad.Environment, Quad.WCF, MailStream.Domain, PostPress.Core.DataAccess, PostPress.Core.Domain, IBatisNet.DataMapper, IBatisNet.Common, MailStream.DataAccess, MailStream.Service, PostPress.Core.Mail</td></tr><tr><td>PostPressCore</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="11" >IBatisNet.Common, IBatisNet.DataMapper, MongoDB.Bson, MongoDB.Driver, Quad.NMS, QuadFramework, ICSharpCode.SharpZipLib, Oracle.DataAccess, antlr.runtime, Spring.Core, Quad.WCF</td></tr><tr><td>PostPressEstimatedOffTime</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="2" >Quad.Core, Quad.App</td></tr><tr><td>PostPressGetGroup</td><td></td><td>Visual Studio 2005</td><td sorttable_customkey="4" >APP_UTIL, DB_UTIL, FILE_UTIL, ML_LIB</td></tr><tr><td>PostPressIssueMoveConsumer</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="8" >Apache.NMS, Apache.NMS.ActiveMQ, Quad.NMS, Quad.App, Quad.Core, Quad.Environment, IBatisNet.DataMapper, IBatisNet.Common</td></tr><tr><td>PostPressMailStream</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="11" >IBatisNet.Common, IBatisNet.DataMapper, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.Service, PostPress.Core.Validation, QuadFramework, MLEntityUtilities.Domain</td></tr><tr><td>PostPressMailTracking</td><td>v4.0</td><td>Visual Studio 2010</td><td sorttable_customkey="11" >IBatisNet.Common, IBatisNet.DataMapper, Oracle.DataAccess, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.Service, QuadFramework, MongoDB.Bson, MongoDB.Driver, PostPress.Core.JobQueue, PostPress.Core.Mail</td></tr><tr><td>PostPressQwmsProcess</td><td>v4.0</td><td>Visual Studio 2010</td><td sorttable_customkey="13" >Apache.NMS, Apache.NMS.ActiveMQ, NHibernate, NHibernate.Linq, Oracle.DataAccess, PostPressUtilities.DataTransfer, Quad.App, Quad.Core, Quad.Environment, Quad.NMS, FluentNHibernate, Newtonsoft.Json, PostPressUtilities.Domain</td></tr><tr><td>PostPressSSRSReports</td><td>unknown</td><td>Visual Studio 2008</td><td sorttable_customkey="0" ></td></tr><tr><td>PostPressScheduledTasks</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="11" >PostPress.Core.DataAccess, QGDatabase, Quad.Core, Quad.App, Quad.Environment, IBatisNet.DataMapper, IBatisNet.Common, Csla, Quad.CslaExt, DB_UTIL, ICSharpCode.SharpZipLib</td></tr><tr><td>PostPressSegmentOptimizer</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="13" >IBatisNet.Common, IBatisNet.DataMapper, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.Service, QuadFramework, SegmentationCore.DataAccess, SegmentationCore.Domain, PostageCalculator.Domain, SegmentationCore.DataTransfer, SegmentationCore.Service, ICSharpCode.SharpZipLib, SegmentationCore.Presentation</td></tr><tr><td>PostPressShipIntegrationWCF</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="12" >Quad.Core, Quad.App, Quad.Environment, Quad.WCF, MailDatFileUtilities.Domain, MailStream.Domain, PostPress.Core.DataAccess, PostPress.Core.Domain, IBatisNet.DataMapper, IBatisNet.Common, MailStream.Service, PostPress.Core.Mail</td></tr><tr><td>PostPressShippingValidationService</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="10" >PostPress.Core.Mail, Quad.Core, Quad.App, Quad.Environment, Quad.WCF, PostPress.Core.DataAccess, PostPress.Core.Domain, IBatisNet.DataMapper, IBatisNet.Common, PostPress.Core.Validation</td></tr><tr><td>PostPressSsrsWCF</td><td>v4.0</td><td>Visual Studio 2010</td><td sorttable_customkey="32" >IBatisNet.Common, IBatisNet.DataMapper, MailStream.DataAccess, MailStream.Domain, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostageCalculator.DataAccess, PostageCalculator.Domain, PostageCalculator.Domain.QTS, PostageUtilities.DataAccess, PostageUtilities.Domain, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.Validation, QuadFramework, Quad.WCF, MailDatFileUtilities.Domain, MailDatFileUtilities.DataAccess, MailDatFileUtilities.MailDatFileReaders, MailStream.Service, PostageCalculator.Domain.Estimator, PostageCalculator.Service, PostageCalculator.Service.MailStreamSetup, PostageUtilities.EntryLevelDetermination, PostageUtilities.GetEntry, PostageUtilities.GetZone, PostageUtilities.QtsDiscountPopulation, PostageUtilities.Service.LogicalConversion, QTS0029Service.Dto, QTS0029Service.Remoting, Transportation.Core</td></tr><tr><td>PostPressUtilities</td><td>v4.0</td><td>Visual Studio 2010</td><td sorttable_customkey="22" >IBatisNet.Common, IBatisNet.DataMapper, MailStream.Domain, MongoDB.Bson, MongoDB.Driver, PostPress.Core.DataAccess, PostPress.Core.Domain, PostPress.Core.Service, PostPress.Core.Validation, QuadFramework, MailDatFileUtilities.Domain, MailStream.Service, QTS0029Service.Dto, Transportation.Core, MailStream.DataAccess, MailDatFileUtilities.MailDatFileReaders, PostageCalculator.Service, PostageCalculator.Service.MailStreamSetup, PostageUtilities.Domain, QTS0029Service.Domain, QTS0029Service.Remoting, Quad.NMS</td></tr><tr><td>PostPressWCFHost</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="4" >MailStream.Domain, PostPress.Core.Domain, PostPress.Core.Validation, QTS0029Service.Dto</td></tr><tr><td>PostPressWCIntegrationWCF</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="12" >PostPress.Core.DataAccess, PostPress.Core.Domain, Quad.Environment, FluentNHibernate, NHibernate, PostPressCore.Wcf, Quad.Core, Quad.App, Quad.WCF, PostPress.Core.Validation, IBatisNet.DataMapper, IBatisNet.Common</td></tr><tr><td>PostPressWasteManagementBcp</td><td>v3.5</td><td>Visual Studio 2008</td><td sorttable_customkey="9" >PostPress.Core.DataAccess, PostPress.Core.Domain, Quad.App, Quad.Core, Quad.Environment, IBatisNet.DataMapper, IBatisNet.Common, MailDatFileUtilities.Domain, MailDatFileUtilities.MailDatFileReaders</td></tr><tr><td>PostageCalculator</td><td>v4.0</td><td>Visual Studio 2010</td><td sorttable_customkey="23" >IBatisNet.Common, IBatisNet.DataMapper, MailStream.Domain, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostPress.Core.DataAccess, PostPress.Core.Domain, QuadFramework, antlr.runtime, Spring.Core, MLEntityUtilities.Domain, PostPress.Core.Validation, MailStream.DataAccess, MailStream.Service, PostageUtilities.DataAccess, PostageUtilities.Domain, PostageUtilities.QtsDiscountPopulation, PostageUtilities.Service.LogicalConversion, PostageUtilities.EntryLevelDetermination, PostageUtilities.GetEntry, PostageUtilities.GetZone, Transportation.Core</td></tr><tr><td>PostageReporting</td><td>v4.0</td><td>Visual Studio 2010</td><td sorttable_customkey="26" >IBatisNet.Common, IBatisNet.DataMapper, MailStream.Domain, MailStream.Service, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostageCalculator.Domain, PostPress.Core.DataAccess, PostPress.Core.Domain, QuadFramework, PostageCalculator.Domain.Estimator, PostageCalculator.Presentation, PostageCalculator.Service.PostageFormCalculator, PostPress.Core.Reporting, PostPress.Core.Validation, PostPress.WCFServiceHost.CrossDockDateServiceHost, MailStream.DataAccess, PostageCalculator.DataAccess, PostageCalculator.Domain.QTS, PostageCalculator.EstimatorPostageCalculator, PostageCalculator.Service, PostageCalculator.Service.MailStreamSetup, PostPress.WCFServiceHost, PostPress.WCFServiceHost.EmployeeServiceHost, PostPress.Core.Service</td></tr><tr><td>PostageUtilities</td><td>v4.0</td><td>Visual Studio 2012</td><td sorttable_customkey="12" >IBatisNet.Common, IBatisNet.DataMapper, MongoDB.Bson, MongoDB.Driver, Oracle.DataAccess, PostPress.Core.DataAccess, PostPress.Core.Domain, QuadFramework, QTS0029Service.Dto, MLEntityUtilities.Domain, ML_LIB, QTS0029Service.Remoting</td></tr></table>
+</body></html>

@@ -1,0 +1,1446 @@
+--- 
+PostPressWasteManagementBcp: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - MailDatFileUtilities.Domain
+  - MailDatFileUtilities.MailDatFileReaders
+PostPressSsrsWCF: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - MailStream.DataAccess
+  - PostageCalculator.DataAccess
+  - PostageUtilities.DataAccess
+  - PostPress.Core.Domain
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - Quad.WCF
+  - PostPress.Core.DataAccess
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - MailDatFileUtilities.Domain
+  - MailStream.Domain
+  - MailDatFileUtilities.MailDatFileReaders
+  - MailStream.Service
+  - PostageCalculator.Domain
+  - PostageCalculator.Service
+  - PostageCalculator.Service.MailStreamSetup
+  - PostageUtilities.Domain
+  - PostageUtilities.GetEntry
+  - PostageUtilities.GetZone
+  - PostageUtilities.QtsDiscountPopulation
+  - QTS0029Service.Dto
+  - QTS0029Service.Remoting
+  - Transportation.Core
+  - MailDatFileUtilities.DataAccess
+PostPressIssueMoveConsumer: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - Apache.NMS
+  - Apache.NMS.ActiveMQ
+  - Quad.NMS
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+PostPressCore: 
+  QuadFramework: "2.1 <br /> "
+  netVersion: v4.0
+  vsVersion: Visual Studio 2010
+  dependencies: 
+  - Quad.NMS
+  - QuadFramework
+  - IBatisNet.Common
+  - IBatisNet.DataMapper
+  - ICSharpCode.SharpZipLib
+  - antlr.runtime
+  - Spring.Core
+  - Quad.WCF
+ListRequest: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - ListRequest.Core
+  - Newtonsoft.Json
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - PostPress.Core.Domain
+ML0027_SRV: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2005
+  dependencies: 
+  - FindRate
+  - PostageCalcHelper
+  - PostageUtilities.Domain
+  - PostageUtilities.GetZone
+  - QGDatabase
+  - Quad.Core
+  - Quad.App
+PostPressCommonWCF: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - MailDatFileUtilities.Domain
+  - MailStream.DataAccess
+  - PostPress.Core.Domain
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - Quad.WCF
+  - MailStream.Domain
+  - MailStream.Service
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Service
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - PostPress.Core.Mail
+  - PostPressCore.ActiveMQ
+  - Quad.NMS
+  - CanadaXmlImport.Service
+ML0017_SRV_REWRITE: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - IBatisNet.Common
+  - IBatisNet.DataMapper
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - PostPress.Core.Service
+  - Quad.App
+  - Quad.Core
+  - Quad.Data
+  - Quad.Environment
+  - MailDatFileUtilities.Domain
+  - MailDatFileUtilities.MailDatFileReaders
+  - MailDatFileUtilities.Service
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+  - ML_LIB
+  - PostPress.Core.JobQueue
+  - tallpdf
+  - Ionic.Zip
+MLEntityUtilities: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - FILE_UTIL
+  - MLEntities.Domain
+PostPressQwmsProcess: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - Apache.NMS
+  - Apache.NMS.ActiveMQ
+  - NHibernate
+  - NHibernate.Linq
+  - Oracle.DataAccess
+  - PostPressUtilities.DataTransfer
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - Quad.NMS
+  - FluentNHibernate
+  - Newtonsoft.Json
+  - PostPressUtilities.Domain
+ML0052_JOB: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2005
+  dependencies: 
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - PostPress.Core.Mail
+PostageUtilities: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - QTS0029Service.Dto
+  - MLEntityUtilities.Domain
+  - ML_LIB
+  - QTS0029Service.Remoting
+PostPressMailTracking: 
+  QuadFramework: "2.1 <br /> "
+  netVersion: v4.0
+  vsVersion: Visual Studio 2010
+  dependencies: 
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - PostPress.Core.Service
+  - QuadFramework
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - PostPress.Core.JobQueue
+ML0051_JOB: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - IBatisNet.DataMapper
+  - ICSharpCode.SharpZipLib
+  - MailDatFileUtilities.MailDatFileReaders
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - PostPress.Core.Service
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - IBatisNet.Common
+  - MailDatFileUtilities.Domain
+  - MLEntityUtilities.Domain
+  - PostPress.Core.JobQueue
+  - MailDatFileUtilities.DataAccess
+  - PostPress.Core.Mail
+ML0038_SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - DB_UTIL
+  - APP_UTIL
+  - FILE_UTIL
+  - Quad.App
+  - Quad.Core
+  - Quad.Data
+  - Quad.Environment
+ListRequestDocumentManager: 
+  QuadFramework: "2.1 <br /> "
+  netVersion: v4.0
+  vsVersion: Visual Studio 2010
+  dependencies: 
+  - Csla
+  - IBatisNet.Common
+  - ListRequest.Core
+  - PresentationCore
+  - PresentationFramework
+  - Quad.SmartStudio.Common
+  - QuadFramework
+  - WindowsBase
+  - IBatisNet.DataMapper
+  - Validation.CommonRules
+  - Quad.Windows.Controls
+  - UIAutomationProvider
+  - ListRequest.Core.WPF
+  - ListRequest.Core.WPF.Outlook
+  - Quad.SmartStudio.ClientUXShell
+  - Quad.Windows.Core
+  - Quad.Windows.Images
+  - SmartStudioWebMvc.Common
+  - WPFToolkit
+PostageCalculator: 
+  QuadFramework: n/a
+  netVersion: v4.0
+  vsVersion: Visual Studio 2010
+  dependencies: 
+  - IBatisNet.Common
+  - MailStream.Domain
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - antlr.runtime
+  - Spring.Core
+  - MLEntityUtilities.Domain
+  - PostPress.Core.Validation
+  - MailStream.Service
+  - PostageUtilities.Domain
+  - PostageUtilities.QtsDiscountPopulation
+  - PostageUtilities.EntryLevelDetermination
+  - PostageUtilities.GetEntry
+  - PostageUtilities.GetZone
+  - PostageUtilities.Service.LogicalConversion
+  - Transportation.Core
+  - PostageUtilities.DataAccess
+ML0028_SRV: 
+  QuadFramework: 2.0 <br /> Needs<br />upgrade
+  netVersion: v4.0
+  vsVersion: Visual Studio 2010
+  dependencies: 
+  - MailStream.Domain
+  - MailStream.Service
+  - PostPress.Core.Domain
+  - PostPress.Core.JobQueue
+  - PostPressUtilities.DataAccess
+  - PostageCalculator.Domain.StreamDiscounts
+  - QuadFramework
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - MLEntityUtilities.Domain
+  - PostageCalculator.StreamDiscountDetermination
+  - PostPress.Core.DataAccess
+  - PostPressUtilities.Domain
+  - PostPressUtilities.Service
+  - QTS0029Service.Dto
+  - QTS0029Service.Remoting
+  - Quad.Core
+ML0048_JOB: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+  - ML_LIB
+ML0020_SRV_REWRITE: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - MailStream.Domain
+  - PostageCalculator.Domain
+  - PostageCalculator.Domain.Estimator
+  - PostPress.Core.Domain
+  - Quad.Core
+  - MailDatFileUtilities.Domain
+  - PostageUtilities.Domain
+  - PostPress.Core.DataAccess
+  - Quad.App
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - PostPress.Core.Validation
+  - MailDatFileUtilities.DataAccess
+  - MailDatFileUtilities.MailDatFileReaders
+  - MailDatFileUtilities.MailDatFileWriters
+  - MaildatFileUtilities.QgRateLevelConversion
+  - PostPress.Core.Service
+  - MailStream.Service
+  - PostPress.Core.Mail
+  - PostageCalculator.Service.MailStreamSetup
+  - PostPress.Core.TestData.Test
+  - ICSharpCode.SharpZipLib
+  - PostageCalculator.DataAccess
+  - PostageCalculator.EstimatorPostageCalculator
+  - PostageCalculator.Presentation
+  - PostageCalculator.Service.PostageFormCalculator
+  - PostageUtilities.EntryLevelDetermination
+  - antlr.runtime
+  - Spring.Core
+  - MailStream.DataAccess
+  - PostageCalculator.Service
+  - PostageUtilities.QtsDiscountPopulation
+  - QTS0029Service.Dto
+  - QTS0029Service.Remoting
+  - Transportation.Core
+ML0053_SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - PostPress.Core.Domain
+  - PostPress.Core.Mail
+ML0018_SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - IBatisNet.Common
+  - IBatisNet.DataMapper
+  - MailStream.DataAccess
+  - MailStream.Domain
+  - MailStream.Service
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - PostPress.Core.Validation
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - QTS0029Service.Remoting
+  - QTS0029Service.Dto
+ML0044_SRV_REWRITE: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - Csla
+  - Quad.CslaExt
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+  - ML_LIB
+  - PostPress.Core.JobQueue
+  - PostPress.Core.Mail
+  - Quad.Data
+PostageReporting: 
+  QuadFramework: "2.1 <br /> "
+  netVersion: v4.0
+  vsVersion: Visual Studio 2010
+  dependencies: 
+  - IBatisNet.DataMapper
+  - MailStream.Domain
+  - MailStream.Service
+  - PostageCalculator.Domain
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - PostageCalculator.Domain.Estimator
+  - PostageCalculator.Presentation
+  - PostageCalculator.Service.PostageFormCalculator
+  - PostPress.Core.Reporting
+  - PostPress.Core.Validation
+  - PostPress.WCFServiceHost.CrossDockDateServiceHost
+  - MailStream.DataAccess
+  - PostageCalculator.DataAccess
+  - PostageCalculator.Domain.QTS
+  - PostageCalculator.EstimatorPostageCalculator
+  - PostageCalculator.Service
+  - PostageCalculator.Service.MailStreamSetup
+  - PostPress.WCFServiceHost
+  - PostPress.WCFServiceHost.EmployeeServiceHost
+  - PostPress.Core.Service
+PostPressShipIntegrationWCF: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - Quad.WCF
+  - MailDatFileUtilities.Domain
+  - MailStream.Domain
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - MailStream.Service
+  - PostPress.Core.Mail
+PostPressScheduledTasks: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - PostPress.Core.DataAccess
+  - QGDatabase
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - Csla
+  - Quad.CslaExt
+  - DB_UTIL
+  - ICSharpCode.SharpZipLib
+PostPressContainerSplitWCF: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - Quad.WCF
+  - MailStream.Domain
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - MailStream.DataAccess
+  - MailStream.Service
+  - PostPress.Core.Mail
+PostPressContainerMovement: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2005
+  dependencies: 
+  - APP_UTIL
+  - DB_UTIL
+  - ML_LIB
+ML0008_SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+  - ML_LIB
+PostPressClassicQuadProcessing: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - Apache.NMS
+  - Apache.NMS.ActiveMQ
+  - PostPressUtilities.DataTransfer
+  - Quad.NMS
+  - Newtonsoft.Json
+  - PostPress.Core.DataAccess
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - MailStream.Domain
+  - MailStream.Service
+  - PostPress.Core.Domain
+ListRequestGenerationWCF: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - ListRequest.Core
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - Quad.WCF
+  - PostPress.Core.Service
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - PostPress.Core.Domain
+  - Newtonsoft.Json
+ListRequestInfoService: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - PostPress.Core.Domain
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - Quad.WCF
+  - IBatisNet.Common
+  - ListRequest.Core
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Service
+  - IBatisNet.DataMapper
+ML0021_SRV: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2005
+  dependencies: 
+  - FindRate
+  - MLDetermineDiscount
+  - MLEntityUtilities.Domain
+  - PostageCalcHelper
+  - PostageUtilities.Domain
+  - PostageUtilities.EntryLevelDetermination
+  - PostageUtilities.GetEntry
+  - PostageUtilities.GetZone
+  - PostageUtilities.QtsDiscountPopulation
+  - PostPress.Core.Domain
+  - QGDatabase
+  - Quad.Core
+ML0030_WEB_SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - Quad.App
+  - Quad.Core
+  - Quad.Data
+  - Quad.Environment
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+ML0055: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2010
+  dependencies: 
+  - Apache.NMS
+  - Apache.NMS.ActiveMQ
+  - Newtonsoft.Json
+  - Quad.NMS
+  - MailStream.Domain
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - PostPress.Core.Mail
+  - PostPressUtilities.DataAccess
+  - PostPressUtilities.Domain
+  - PostPressUtilities.Service
+ML0043_SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - APP_UTIL
+  - DB_UTIL
+  - ML_LIB
+  - PostPress.Core.Domain
+  - Quad.App
+  - Quad.Data
+  - FILE_UTIL
+  - Quad.Core
+  - Quad.Environment
+ML0049_SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - PostPress.Core.Validation
+  - Quad.App
+  - Quad.Core
+  - Quad.Data
+  - Quad.Environment
+  - FILE_UTIL
+  - PostPress.Core.Mail
+ChpPostPress: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - PostPress.Core.Domain
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - Quad.WCF
+  - IBatisNet.Common
+  - PostPress.Core.DataAccess
+  - Newtonsoft.Json
+  - PostPress.Core.TestData.Test
+  - ICSharpCode.SharpZipLib
+  - PostPress.Core.Service
+  - PostPress.Core.Validation
+  - PostPress.Core.Mail
+  - ChpMain.Model
+  - ChpMain.Service
+  - ChpMain.Shared
+ML_LIB: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+ListRequestDocumentUploadWebsite: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - ListRequest.Core
+  - Quad.Core
+ML0001_SRV: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - Accessibility
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+  - ML_LIB
+  - Quad.Data
+ML0042_SRV: 
+  QuadFramework: 2.0 <br /> Needs<br />upgrade
+  netVersion: v4.0
+  vsVersion: Visual Studio 2010
+  dependencies: 
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - QuadFramework
+  - MailDatFileUtilities.DataAccess
+  - MailDatFileUtilities.Domain
+  - PostPress.Core.JobQueue
+  - PostPress.Core.Mail
+  - MailStream.DataAccess
+  - MailStream.Domain
+  - MailStream.Service
+ML0039_SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - DB_UTIL
+  - PostPress.Core.Reporting
+  - MailDatFileUtilities.Domain
+  - MailStream.DataAccess
+  - MailStream.Domain
+  - MailStream.Service
+  - PostPress.Core.Domain
+  - Quad.App
+  - Quad.Core
+  - Quad.Data
+  - Quad.Environment
+  - APP_UTIL
+  - CQGPDFForms
+  - FILE_UTIL
+  - IBatisNet.Common
+  - IBatisNet.DataMapper
+  - pdfkit
+  - PDPostalManifest
+  - PDUtility
+  - PostageCalculator.DataAccess
+  - PostageCalculator.Domain
+  - PostageCalculator.Domain.Estimator
+  - PostageCalculator.Domain.QTS
+  - PostageCalculator.Domain.StreamDiscounts
+  - PostageCalculator.Service
+  - PostageCalculator.Service.MailStreamSetup
+  - PostageCalculator.Service.StreamDiscounts
+  - PostageCalculator.StreamDiscountDetermination
+  - PostageUtilities.DataAccess
+  - PostageUtilities.Domain
+  - PostageUtilities.EntryLevelDetermination
+  - PostageUtilities.GetEntry
+  - PostageUtilities.GetZone
+  - PostageUtilities.QtsDiscountPopulation
+  - PostageUtilities.Service.LogicalConversion
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Mail
+  - PostPress.Core.Validation
+  - QTS0029Service.Dto
+  - QTS0029Service.Remoting
+  - QTS_Entity
+  - QTS_LIB
+  - ShippingLocationException
+  - tallpdf
+  - Transportation.Core
+  - VMS_Support
+PostPressSegmentOptimizer: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - SegmentationCore.DataAccess
+  - SegmentationCore.Domain
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - Csla
+  - PostPress.Core.Service
+  - SegmentationCore.Service
+MLPackageAllocation: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2005
+  dependencies: 
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+ML0029_SRV: 
+  QuadFramework: n/a
+  netVersion: v4.0
+  vsVersion: Visual Studio 2010
+  dependencies: 
+  - PostPress.Core.Service
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - Quad.WCF
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - MailStream.Domain
+  - MailStream.DataAccess
+  - MailStream.Service
+  - PostPress.Core.JobQueue
+PostPressShippingValidationService: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - PostPress.Core.Mail
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - Quad.WCF
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - PostPress.Core.Validation
+ML0022_SRV: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - ML_LIB
+  - pdfkit
+  - QGDatabase
+  - QGEMail
+  - Quad.Data
+  - QuadPDF
+  - tallpdf
+MLGetEntry: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2005
+  dependencies: 
+  - IBatisNet.Common
+  - IBatisNet.DataMapper
+  - MLEntities.Domain
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - DB_UTIL
+  - MLEntityUtilities.Domain
+ML0054_SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - MailDatFileUtilities.Domain
+  - PostageUtilities.Domain
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - Csla
+  - Quad.CslaExt
+  - PostPress.Core.Mail
+  - MailStream.Domain
+  - MailStream.Service
+  - MLEntityUtilities.Domain
+  - PostageCalculator.Service
+  - PostageCalculator.Service.MailStreamSetup
+  - PostageUtilities.EntryLevelDetermination
+  - PostageUtilities.Service.LogicalConversion
+  - PostPressUtilities.DataTransfer
+  - PostPressUtilities.Domain
+  - Quad.NMS
+ML0019_SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - Accessibility
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+  - ICSharpCode.SharpZipLib
+  - Quad.Data
+PostPressWCFHost: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - MailStream.Domain
+  - PostPress.Core.Domain
+  - PostPress.Core.Validation
+  - QTS0029Service.Dto
+ML0034_SRV: 
+  QuadFramework: "2.1 <br /> "
+  netVersion: v4.0
+  vsVersion: Visual Studio 2010
+  dependencies: 
+  - MailStream.Domain
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - PostPressUtilities.DataAccess
+  - PostPressUtilities.Domain
+  - QuadFramework
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - Quad.Core
+  - MailStream.Service
+  - PostPress.Core.JobQueue
+  - Quad.App
+  - Quad.Environment
+  - Accessibility
+  - Antlr3.Runtime
+  - FluentNHibernate
+  - Iesi.Collections
+  - MailStream.DataAccess
+  - MongoDB.Bson
+  - MongoDB.Driver
+  - NHibernate
+  - NHibernate.Caches.SysCache
+  - NHibernate.Linq
+  - PostPressUtilities.DataTransfer
+  - PostPressUtilities.Service
+  - Quad.Data
+  - Quad.NHibernate
+ML0009_SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - PostPress.Core.Mail
+PostPressSSRSReports: 
+  QuadFramework: n/a
+  netVersion: unknown
+  vsVersion: Visual Studio 2008
+  dependencies: []
+
+PostPressEstimatedOffTime: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - Quad.Core
+  - Quad.App
+ML0035_SRV_REWRITE: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+  - ML_LIB
+  - PostPress.Core.Mail
+  - PostPress.Core.Service
+  - Quad.App
+  - Quad.Environment
+  - Quad.Core
+ML0002_SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - MailDatFileUtilities.DataAccess
+  - MailDatFileUtilities.Domain
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - PostPress.Core.Service
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - MailDatFileUtilities.MailDatFileReaders
+  - PostPress.Core.Mail
+  - ICSharpCode.SharpZipLib
+  - MailDatFileUtilities.MailDatFileWriters
+  - MailDatFileUtilities.RateCategoryConversion
+ML0056_SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - PostageCalculator.Domain.Estimator
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - Csla
+  - Quad.CslaExt
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+  - PostPress.Core.JobQueue
+  - PostageCalculator.EstimatorPostageCalculator
+  - PostageCalculator.Presentation
+  - PostageCalculator.Service.MailStreamSetup
+  - PostageCalculator.Service.PostageFormCalculator
+MLEntities: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2008
+  dependencies: []
+
+PostPressWCIntegrationWCF: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - Quad.Environment
+  - FluentNHibernate
+  - NHibernate
+  - PostPressCore.Wcf
+  - Quad.Core
+  - Quad.App
+  - Quad.WCF
+  - PostPress.Core.Validation
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+MLDiscountInterface: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2005
+  dependencies: 
+  - IBatisNet.DataMapper
+  - QTS0029Service.Dto
+  - Quad.App
+  - Quad.Environment
+  - QTS0029Service.Remoting
+ML0046_SRV: 
+  QuadFramework: n/a
+  netVersion: v2.0
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - ActiveReports
+  - ActiveReports.PdfExport
+  - ActiveReports.Viewer
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+  - ML_LIB
+  - Quad.Data
+  - UTIL
+PostPressMailStream: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - IBatisNet.Common
+  - IBatisNet.DataMapper
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - PostPress.Core.Validation
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - MLEntityUtilities.Domain
+PostPressGetGroup: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2005
+  dependencies: 
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+  - ML_LIB
+ML0045_SRV: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2005
+  dependencies: 
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+  - ML_LIB
+  - Quad.Core
+  - Quad.App
+  - Quad.Data
+ListRequestReports: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - IBatisNet.Common
+  - IBatisNet.DataMapper
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+MLDetermineDiscount: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2005
+  dependencies: 
+  - IBatisNet.Common
+  - IBatisNet.DataMapper
+  - MLEntities.Domain
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - MLEntityUtilities.Domain
+  - MLGetEntry.DataAccess
+  - MLGetEntry.Domain
+  - MLGetEntry.Lib
+  - MLDetermineDiscount.Domain
+MLPackageAllocationWrapper: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2005
+  dependencies: 
+  - MLPackageAllocation.Lib
+MLEntryWrapper: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - MLEntityUtilities.Domain
+  - QTS0029Service.Dto
+  - QTS0029Service.Remoting
+  - Transportation.Core
+  - Quad.Core
+ML0047SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - IBatisNet.DataMapper
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - PostPress.Core.Validation
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - DB_UTIL
+  - FILE_UTIL
+  - PostageCalculator.Domain.Estimator
+  - APP_UTIL
+  - ML_LIB
+  - Quad.Data
+  - MLEntityUtilities.Domain
+  - PostageCalculator.Domain.StreamExtract
+  - PostageCalculator.Service.MailStreamSetup
+  - PostageCalculator.StreamExtract
+  - MailDatFileUtilities.Domain
+  - MailStream.Domain
+  - MailStream.Service
+  - PostageCalculator.EstimatorPostageCalculator
+  - PostageCalculator.Presentation
+ML0003_SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - MailStream.DataAccess
+  - MailStream.Domain
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - PostPress.Core.Validation
+  - Quad.Environment
+  - Quad.Core
+  - Quad.App
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - MailDatFileUtilities.Domain
+  - PostPress.Core.Mail
+  - PostPress.Core.Service
+  - PostPressUtilities.DataAccess
+  - PostPressUtilities.Domain
+  - PostPressUtilities.Service
+  - QTS0029Service.Dto
+  - MailStream.Service
+  - QTS0029Service.Remoting
+  - Quad.Data
+  - MailDatFileUtilities.MailDatFileReaders
+  - MailDatFileUtilities.DataAccess
+ML0057_SRV: 
+  QuadFramework: n/a
+  netVersion: v4.0
+  vsVersion: Visual Studio 2010
+  dependencies: 
+  - PostageCalculator.Domain.Estimator
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - Csla
+  - Quad.CslaExt
+  - PostageReporting.Domain
+  - PostageReporting.Service
+  - PostPress.Core.JobQueue
+  - PostPress.Core.Validation
+  - Quad.Data
+ML0025_SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+  - ML_LIB
+  - PostageReporting.Domain
+  - PostPress.Core.Domain
+  - Quad.App
+  - Quad.Core
+  - Quad.Data
+ML0050_SRV: 
+  QuadFramework: "2.1 <br /> "
+  netVersion: v4.0
+  vsVersion: Visual Studio 2010
+  dependencies: 
+  - PostageReporting.Domain
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - PostPress.Core.Validation
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - CustomerReporting.DataAccess
+  - CustomerReporting.Domain
+  - CustomerReporting.Presentation
+  - CustomerReporting.Service
+  - FILE_UTIL
+  - IBatisNet.Common
+  - IBatisNet.DataMapper
+  - MailStream.DataAccess
+  - MailStream.Domain
+  - MailStream.Service
+  - ML_LIB
+  - PostageCalculator.DataAccess
+  - PostageCalculator.Domain
+  - PostageCalculator.Domain.Estimator
+  - PostageCalculator.Domain.QTS
+  - PostageCalculator.EstimatorPostageCalculator
+  - PostageCalculator.Presentation
+  - PostageCalculator.Service
+  - PostageCalculator.Service.MailStreamSetup
+  - PostageCalculator.Service.PostageFormCalculator
+  - PostageReporting.DataAccess
+  - PostageReporting.Presentation
+  - PostageReporting.Service
+  - PostageUtilities.DataAccess
+  - PostageUtilities.Domain
+  - PostageUtilities.EntryLevelDetermination
+  - PostageUtilities.GetEntry
+  - PostageUtilities.GetZone
+  - PostageUtilities.QtsDiscountPopulation
+  - PostageUtilities.Service.LogicalConversion
+  - PostPress.Core.Mail
+  - PostPress.Core.Reporting
+  - PostPress.WCFServiceHost
+  - PostPress.WCFServiceHost.CrossDockDateServiceHost
+  - QTS0029Service.Dto
+  - QTS0029Service.Remoting
+  - Quad.Data
+  - Transportation.Core
+  - PostPress.Core.JobQueue
+  - APP_UTIL
+  - DB_UTIL
+ML0015_SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - APP_UTIL
+  - DB_UTIL
+  - ML_LIB
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - Csla
+  - MailDatFileUtilities.Domain
+  - Quad.CslaExt
+  - FILE_UTIL
+  - ICSharpCode.SharpZipLib
+  - MailDatFileUtilities.MailDatFileReaders
+  - MailStream.Domain
+  - MailStream.Service
+  - MLPackageAllocation.Lib
+  - PostPressUtilities.Service
+  - Quad.Data
+MLGetZone: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2005
+  dependencies: 
+  - IBatisNet.Common
+  - IBatisNet.DataMapper
+  - MLEntities.Domain
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - DB_UTIL
+  - MLEntityUtilities.Domain
+  - MLGetEntry.DataAccess
+  - MLGetEntry.Domain
+  - MLGetEntry.Lib
+  - MLGetZone.Domain
+PostPressUtilities: 
+  QuadFramework: "2.1 <br /> "
+  netVersion: v4.0
+  vsVersion: Visual Studio 2010
+  dependencies: 
+  - MailStream.Domain
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - PostPress.Core.Service
+  - PostPress.Core.Validation
+  - QuadFramework
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - MailDatFileUtilities.Domain
+  - MailStream.Service
+  - QTS0029Service.Dto
+  - Transportation.Core
+  - MailStream.DataAccess
+  - MailDatFileUtilities.MailDatFileReaders
+  - PostageCalculator.Service
+  - PostageCalculator.Service.MailStreamSetup
+  - PostageUtilities.Domain
+  - QTS0029Service.Remoting
+  - Quad.NMS
+PostPressContainerMovementWCF: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - Quad.WCF
+  - MailStream.Domain
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - MailStream.DataAccess
+  - MailStream.Service
+  - PostPress.Core.Service
+  - PostPressUtilities.DataAccess
+  - PostPressUtilities.Domain
+  - PostPressUtilities.Service
+ML0006_SRV_REWRITE: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+  - MLPackageAllocation.Lib
+  - ML_LIB
+  - PostPress.Core.Mail
+ListRequestCore: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - Quad.Environment
+  - Quad.Core
+  - Newtonsoft.Json
+  - PresentationCore
+  - PresentationFramework
+  - WindowsBase
+ML0040_SRV: 
+  QuadFramework: n/a
+  netVersion: ""
+  vsVersion: Visual Studio 2005
+  dependencies: 
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+  - FREIGHT_BILLING_UTIL
+  - ML_LIB
+  - MPU_PSTL_UTIL
+  - Quad.App
+  - Quad.Core
+  - Quad.Data
+ListRequestFlo: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - ListRequest.Core
+  - ListRequest.Core.WinForms
+  - Quad.Core
+ML0005_SRV: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - Quad.Core
+  - Quad.App
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - ICSharpCode.SharpZipLib
+  - PostPress.Core.Domain
+  - PostPress.Core.Mail
+  - PostPress.Core.Validation
+  - MailDatFileUtilities.Domain
+  - MailDatFileUtilities.MailDatFileReaders
+  - ML0005_SRV.Service
+ML0037_SRV: 
+  QuadFramework: n/a
+  netVersion: v4.0
+  vsVersion: Visual Studio 2012
+  dependencies: 
+  - PostPress.Core.DataAccess
+  - PostPress.Core.Domain
+  - Quad.App
+  - Quad.Core
+  - Quad.Environment
+  - IBatisNet.DataMapper
+  - IBatisNet.Common
+  - Csla
+  - MailStream.Domain
+  - Quad.CslaExt
+  - Apache.NMS
+  - Apache.NMS.ActiveMQ
+  - MailStream.Service
+  - PostPress.Core.Mail
+  - PostPress.Core.Service
+  - PostPress.Core.Validation
+  - PostPressCore.ActiveMQ
+  - Quad.NMS
+  - MailStream.DataAccess
+ML0004_SRV_REWRITE: 
+  QuadFramework: n/a
+  netVersion: v3.5
+  vsVersion: Visual Studio 2008
+  dependencies: 
+  - APP_UTIL
+  - DB_UTIL
+  - FILE_UTIL
+  - ML_LIB
+  - PostPress.Core.Mail
