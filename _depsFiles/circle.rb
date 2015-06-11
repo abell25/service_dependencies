@@ -15,10 +15,13 @@ def jsonStats
   stats.sort.each do |service, v|
     stat = stats[service]
     deps =  stat["dependencies"].nil? ? "" : stat["dependencies"].map{|dep| "\"#{dep}\""}.join(",")
+    wcfDeps =  stat["wcfDependencies"].nil? ? "" : stat["wcfDependencies"].map{|dep| "\"#{dep}\""}.join(",")
+    depsAndWcfDeps = deps + "," + wcfDeps
     allDeps += stat["dependencies"]  unless stat["dependencies"].nil?
+    allDeps += stat["wcfDependencies"]  unless stat["wcfDependencies"].nil?
     services << service
 
-    jsonLine = "{\"name\": \"#{service.split('.').join('-')}\", \"size\":1, \"imports\": [#{deps.map {|s| s.split('.').join('-')}}]}"
+    jsonLine = "{\"name\": \"#{service.split('.').join('-')}\", \"size\":1, \"imports\": [#{depsAndWcfDeps.map {|s| s.split('.').join('-')}}]}"
     json << jsonLine
   end
   servicesToBeAdded = allDeps.uniq - services.uniq
@@ -65,11 +68,9 @@ def getstats
       "dependencies" => uniqDependencies(service),
       "vsVersion"    => vsVersion(service),
       "netVersion"   => highestDotNetVersion(service),
-      "QuadFramework" => getQuadFramework(service)
+      "QuadFramework" => getQuadFramework(service),
+      "wcfDependencies" => uniqWcfDependencies(service)
     }
-    # @res[service]["deps"] = getDependencies(service)
-    # @res[service]["vsVersion"] = vsVersion(service)
-    # @res[service]["netVersion"] = highestDotNetVersion(service)
   end
   return @res
 end
@@ -100,6 +101,20 @@ def uniqDependencies service
   blackList = /System|Ibatis|Microsoft|Logging|log4net|Rhino|nunit|Sybase|Castle|IDesign|Monorail|Proxy|NVelocity/
   deps = deps.select {|d| d !~ blackList}
   return deps
+end
+
+def uniqWcfDependencies service
+  deps = getWcfDependencies(service)
+  return deps
+end
+
+#Returns an array of wcf dependencies
+def getWcfDependencies service
+  deps = []
+  Util.csprojs(service).each do |csproj|
+    deps += getWcfDeps(csproj) 
+  end
+  return deps.uniq
 end
 
 #Returns an array of dependencies
@@ -153,6 +168,16 @@ def getDeps csproj
     deps << ref.get_attribute("include").match(/^([^,]+),*/)[1]
   end
   return deps
+end
+
+def getWcfDeps csproj
+   wcfs = csproj.search("none").
+	select {|tag| tag.get_attribute("include") =~ /Service Reference.*\.wsdl/i }.
+	map {|tag| tag.get_attribute("include") }.
+	map {|s| /Service References[\\\/]([^\\\/]+)[\\\/]/.match(s)[1] }.
+	map {|s| s.gsub /Service|Reference|Refernce|Wcf|I18N/i, '' }.
+	map {|s| ('WCF__' + s + 'Wcf').downcase }
+   return wcfs
 end
 
 
