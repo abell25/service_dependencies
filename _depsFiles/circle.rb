@@ -5,6 +5,7 @@ require 'net/http'
 require 'util'
 
 @res = {}
+@wcfNames = {}
 
 
 def jsonStats
@@ -15,10 +16,10 @@ def jsonStats
   stats.sort.each do |service, v|
     stat = stats[service]
     deps =  stat["dependencies"].nil? ? "" : stat["dependencies"].map{|dep| "\"#{dep}\""}.join(",")
-    wcfDeps =  stat["wcfDependencies"].nil? ? "" : stat["wcfDependencies"].map{|dep| "\"#{dep}\""}.join(",")
+    wcfDeps =  stat["wcfDependencies"].nil? ? "" : stat["wcfDependencies"].map{|dep| "\"#{@wcfNames[dep]}\""}.join(",")
     depsAndWcfDeps = deps + "," + wcfDeps
     allDeps += stat["dependencies"]  unless stat["dependencies"].nil?
-    allDeps += stat["wcfDependencies"]  unless stat["wcfDependencies"].nil?
+    allDeps += stat["wcfDependencies"].map {|wcf| @wcfNames[wcf] }  unless stat["wcfDependencies"].nil?
     services << service
 
     jsonLine = "{\"name\": \"#{service.split('.').join('-')}\", \"size\":1, \"imports\": [#{depsAndWcfDeps.map {|s| s.split('.').join('-')}}]}"
@@ -41,13 +42,14 @@ def tableStats
     + "<th>dependencies</th></tr>"
   stats.sort.each do |service, v|
     stat = stats[service]
+    allDeps = stat["dependencies"] + stat["wcfDependencies"].map {|wcf| @wcfNames[wcf] }
     table += "<tr>"
     table += "<td>" + service + "</td>"
     table += "<td>" + stat["netVersion"] + "</td>"
     table += "<td>" + stat["vsVersion"] + "</td>"
     #table += "<td>" + stat["QuadFramework"] + "</td>"
-    table += "<td sorttable_customkey=\"#{ stat["dependencies"].nil? ? 0 : stat["dependencies"].length }\" >" \
-   		    + stat["dependencies"].join(", ") + "</td>"
+    table += "<td sorttable_customkey=\"#{ allDeps.nil? ? 0 : allDeps.length }\" >" \
+   		    + allDeps.join(", ") + "</td>"
     table += "</tr>"
   end
   table += "</table>"
@@ -175,8 +177,12 @@ def getWcfDeps csproj
 	select {|tag| tag.get_attribute("include") =~ /Service Reference.*\.wsdl/i }.
 	map {|tag| tag.get_attribute("include") }.
 	map {|s| /Service References[\\\/]([^\\\/]+)[\\\/]/.match(s)[1] }.
-	map {|s| s.gsub /Service|Reference|Refernce|Wcf|I18N/i, '' }.
-	map {|s| ('WCF__' + s + 'Wcf').downcase }
+	map {|s| s.gsub /Service|Reference|Refernce|Wcf|I18N/i, '' }
+   
+   wcfs.each do |wcf|
+        @wcfNames[wcf.downcase] = 'Wcf_' + wcf + 'Wcf'
+   end
+   wcfs = wcfs.map {|s| (s.downcase) }
    return wcfs
 end
 
