@@ -28,7 +28,7 @@ def jsonStats
   servicesToBeAdded.each {|s| json << "{\"name\": \"#{s.split('.').join('-')}\", \"size\":1, \"imports\": []}" }
 
   resultStr = "stats = [#{json.join(",")}];"
-  File.open("stats.js", "w") do |file|
+  File.open("deps/stats.js", "w") do |file|
     file.puts resultStr
   end
 end
@@ -181,5 +181,6 @@ def getWcfDeps csproj
 end
 
 
-
-
+if __FILE__ == $0
+  tableStats
+end

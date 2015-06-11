@@ -1,3 +1,0 @@
-require './circle.rb'
-
-tableStats
